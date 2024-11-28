@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import "../assets/css/App.css";
 import Logo from "../assets/img/Logo.png";
 
@@ -16,19 +17,25 @@ const LoginRegistration = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5124/api/login", {
+            const response = await fetch("http://localhost:5124/api/User/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ EmailAddress: EmailAddress, UserPassword: UserPassword }),
+                body: JSON.stringify({ FullName: "", Username: "", EmailAddress: EmailAddress, UserPassword: UserPassword }),
             });
 
             if (response.ok) {
-                const data = await response.json();
-                console.log("Login successful!", data);
+                const responseData = await response.json();
+                localStorage.setItem('userData', JSON.stringify(responseData));
+                navigate("/home");
+
             } else {
-                console.error("Login failed:", response.status);
+                document.getElementById('reg_info').innerText = "Incorrect username or password!";
+                document.getElementById('reg_info').style.display = "block";
+                document.getElementById('reg_info').style.color = "#4f0716";
+                document.getElementById('reg_info').style.padding = "10px";
+                document.getElementById('reg_info').style.backgroundColor = "#9c6d77";
             }
         } catch (error) {
             console.error("Error occurred during login:", error);
@@ -36,10 +43,11 @@ const LoginRegistration = () => {
     };
 
     const handleRegistration = async (e) => {
+
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5124/api/register", {
+            const response = await fetch("http://localhost:5124/api/User/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -47,14 +55,29 @@ const LoginRegistration = () => {
                 body: JSON.stringify({ FullName: FullName, Username: Username, EmailAddress: RegEmailAddress, UserPassword: RegUserPassword }),
             });
 
+            const responseData = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
-                console.log("Login successful!", data);
+                document.getElementById('reg_info').innerText = "Registration Successful.. Please log in!";
+                document.getElementById('reg_info').style.display = "block";
+                document.getElementById('reg_info').style.color = "#72ad82";
+                document.getElementById('reg_info').style.padding = "10px";
+                document.getElementById('reg_info').style.backgroundColor = "#074f1b";
+
             } else {
-                console.error("Login failed:", response.status);
+                document.getElementById('reg_info').innerText = "Registration failed!" + responseData;
+                document.getElementById('reg_info').style.display = "block";
+                document.getElementById('reg_info').style.color = "#4f0716";
+                document.getElementById('reg_info').style.padding = "10px";
+                document.getElementById('reg_info').style.backgroundColor = "#9c6d77";
             }
         } catch (error) {
             console.error("Error occurred during login:", error);
+            document.getElementById('reg_info').innerText = "Error occured during registration!" + error;
+            document.getElementById('reg_info').style.display = "block";
+            document.getElementById('reg_info').style.color = "#4f0716";
+            document.getElementById('reg_info').style.padding = "10px";
+            document.getElementById('reg_info').style.backgroundColor = "#9c6d77";
         }
     };
 
@@ -180,7 +203,7 @@ const LoginRegistration = () => {
                                 </div>
 
                                 <div className="text-center mb-3">
-                                    <p id='reg_error' style={{ color: "b83a39", display: "none" }}></p>
+                                    <p id='reg_info' style={{ display: "none" }}></p>
                                 </div>
 
                                 <button
