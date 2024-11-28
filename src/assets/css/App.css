@@ -1,0 +1,34 @@
+body {
+  background-color: #fafafa;
+}
+
+@font-face {
+  font-family: "Queensides";
+  src: url("../fonts/Queensides.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "QueensidesMedium";
+  src: url("../fonts/QueensidesMedium.ttf") format("truetype");
+}
+
+.custom_img {
+  background-image: url("../img/wallpaper.png");
+  background-attachment: fixed;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.login-container {
+  width: 1000px;
+  background: white;
+  border: 1px solid #dbdbdb;
+  padding: 50px;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.small-text {
+  font-size: 0.9rem;
+}
