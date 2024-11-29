@@ -115,7 +115,7 @@ const ProfilePage = () => {
 
                 <div className="row align-items-center">
                     <p style={{ marginTop: '2rem' }}>Want to create a new post?</p>
-                    <button className="btn btn-primary" onClick={() => navigate('/create-post')}>Create New</button>
+                    <button className="btn btn-primary" onClick={() => navigate('/create')}>Create New</button>
                 </div>
 
                 <div className="row" style={{ marginTop: '2rem' }}>

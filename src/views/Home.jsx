@@ -13,13 +13,13 @@ const Home = () => {
 
     const navigate = useNavigate();
 
-    const [posts, setPosts] = useState([]); // State to store posts
-    const [loading, setLoading] = useState(true); // Loading state
-    const [error, setError] = useState(null); // Error state
+    const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    const [showModal, setShowModal] = useState(false); // Modal show state
-    const [newPassword, setNewPassword] = useState(""); // New password state
-    const [confirmPassword, setConfirmPassword] = useState(""); // Confirm password state
+    const [showModal, setShowModal] = useState(false);
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         if (!userData) {
@@ -35,7 +35,15 @@ const Home = () => {
                     throw new Error("Failed to fetch posts");
                 }
                 const data = await response.json();
-                setPosts(data);
+                
+                const sortedPosts = data.sort((a, b) => {
+                    const dateA = new Date(a.postedDate);
+                    const dateB = new Date(b.postedDate);
+                    return dateB - dateA;
+                });
+
+                setPosts(sortedPosts);
+
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -165,6 +173,7 @@ const Home = () => {
                                 <input
                                     id="newPassword"
                                     name="content"
+                                    type="password"
                                     className="form-control"
                                     placeholder='Please enter your desired password!'
                                     value={newPassword}
@@ -174,6 +183,7 @@ const Home = () => {
                                 <input
                                     id="confirmPassword"
                                     name="content"
+                                    type="password"
                                     className="form-control mt-3"
                                     placeholder='Please enter password again!'
                                     value={confirmPassword}

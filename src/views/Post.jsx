@@ -17,6 +17,11 @@ const Post = () => {
     const userData = JSON.parse(localStorage.getItem('userData'));
     const userId = userData?.userId;
 
+    const [editCommentData, setEditCommentData] = useState({
+        commentId: "",
+        content: "",
+    });
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,11 +29,6 @@ const Post = () => {
             navigate("/");
         }
     }, [userData, navigate]);
-
-    const [editCommentData, setEditCommentData] = useState({
-        commentId: "",
-        content: "",
-    });
 
     useEffect(() => {
         const fetchPostDetails = async () => {
@@ -71,7 +71,6 @@ const Post = () => {
             }
 
             const updatedPost = await response.json();
-
             setPost(updatedPost);
             setComments("");
         } catch (err) {
@@ -125,8 +124,8 @@ const Post = () => {
             if (!response.ok) {
                 throw new Error("Failed to delete comment");
             }
-
             const updatedPost = await response.json();
+
             setPost(updatedPost);
         } catch (err) {
             alert(err.message);
