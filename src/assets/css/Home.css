@@ -1,0 +1,39 @@
+.navbar {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* .center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  height: 100vh;
+  justify-content: flex-start;
+  padding-top: 50px;
+} */
+
+/* Home.css */
+.f-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+
+.c-pad {
+  padding-left: 20px !important;
+  padding-right: 20px !important;
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto; /* Make this section scrollable */
+  height: 75vh; /* Takes 80% of the screen height */
+  padding-top: 50px; /* Space from the top of the container */
+  padding-bottom: 20px; /* Space from the bottom of the container */
+  gap: 20px; /* Space between cards */
+
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none;
+}

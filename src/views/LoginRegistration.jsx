@@ -13,6 +13,8 @@ const LoginRegistration = () => {
     const [Username, setUsername] = useState("");
     const [RegUserPassword, setRegUserPassword] = useState("");
 
+    const navigate = useNavigate();
+
     const handleLogin = async (e) => {
         e.preventDefault();
 
@@ -31,11 +33,10 @@ const LoginRegistration = () => {
                 navigate("/home");
 
             } else {
-                document.getElementById('reg_info').innerText = "Incorrect username or password!";
-                document.getElementById('reg_info').style.display = "block";
-                document.getElementById('reg_info').style.color = "#4f0716";
-                document.getElementById('reg_info').style.padding = "10px";
-                document.getElementById('reg_info').style.backgroundColor = "#9c6d77";
+                document.getElementById('login_error').style.display = "block";
+                document.getElementById('login_error').style.color = "#4f0716";
+                document.getElementById('login_error').style.padding = "10px";
+                document.getElementById('login_error').style.backgroundColor = "#9c6d77";
             }
         } catch (error) {
             console.error("Error occurred during login:", error);
@@ -55,17 +56,15 @@ const LoginRegistration = () => {
                 body: JSON.stringify({ FullName: FullName, Username: Username, EmailAddress: RegEmailAddress, UserPassword: RegUserPassword }),
             });
 
-            const responseData = await response.json();
-
             if (response.ok) {
                 document.getElementById('reg_info').innerText = "Registration Successful.. Please log in!";
                 document.getElementById('reg_info').style.display = "block";
-                document.getElementById('reg_info').style.color = "#72ad82";
+                document.getElementById('reg_info').style.color = "#074f1b";
                 document.getElementById('reg_info').style.padding = "10px";
-                document.getElementById('reg_info').style.backgroundColor = "#074f1b";
+                document.getElementById('reg_info').style.backgroundColor = "#72ad82";
 
             } else {
-                document.getElementById('reg_info').innerText = "Registration failed!" + responseData;
+                document.getElementById('reg_info').innerText = "Registration failed!";
                 document.getElementById('reg_info').style.display = "block";
                 document.getElementById('reg_info').style.color = "#4f0716";
                 document.getElementById('reg_info').style.padding = "10px";
@@ -127,8 +126,8 @@ const LoginRegistration = () => {
                                     />
                                 </div>
 
-                                <div id='login_error' className="text-center mb-3">
-                                    <p style={{ color: "b83a39", display: "none" }}>Incorrect username or password!</p>
+                                <div className="text-center mb-3">
+                                    <p id='login_error' style={{ display: "none" }}>Incorrect username or password!</p>
                                 </div>
 
                                 <button
