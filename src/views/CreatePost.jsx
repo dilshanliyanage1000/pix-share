@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import '../assets/css/Home.css'
+import '../assets/css/Home.css';
+import { API_END_POINT } from '../constants';
 
 const CreatePost = () => {
 
@@ -39,7 +40,7 @@ const CreatePost = () => {
         formData.append("movieFile", file);
 
         try {
-            const response = await fetch("http://localhost:5124/api/Post/create", {
+            const response = await fetch(`${API_END_POINT}/api/Post/create`, {
                 method: "POST",
                 body: formData,
             });
@@ -118,7 +119,7 @@ const CreatePost = () => {
                                 id="file"
                                 className="form-control"
                                 onChange={handleFileChange}
-                                accept="image/*,video/*"
+                                accept="image/*"
                                 style={{ width: "90%" }}
                                 required
                             />

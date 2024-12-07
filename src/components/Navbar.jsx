@@ -31,10 +31,16 @@ const Navbar = () => {
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav ms-auto">
                         <li className="nav-item">
-                            <a className="nav-link" href="#" style={{ color: "#dd6362" }}>Hello {fullName}!</a>
+                            <Link className="nav-link" to="/create">Create Post</Link>
                         </li>
                         <li className="nav-item">
-                            <a className="nav-link" onClick={handleLogout} href="#">Logout</a>
+                            <Link className="nav-link" to="/profile">Your feed</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link className="nav-link" data-bs-toggle="modal" data-bs-target="#editPasswordModal">Change Password</Link>
+                        </li>
+                        <li className="nav-item">
+                            <a className="nav-link" onClick={handleLogout} href="#" style={{ color: "#dd6362" }}>Not {fullName}? Logout</a>
                         </li>
                     </ul>
                 </div>

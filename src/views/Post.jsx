@@ -5,6 +5,7 @@ import '../assets/css/Home.css';
 import { faUser, faCalendarDays } from '@fortawesome/free-regular-svg-icons';
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { API_END_POINT } from '../constants';
 
 const Post = () => {
 
@@ -33,7 +34,7 @@ const Post = () => {
     useEffect(() => {
         const fetchPostDetails = async () => {
             try {
-                const response = await fetch(`http://localhost:5124/api/Post/get-by-id/${postId}`);
+                const response = await fetch(`${API_END_POINT}/api/Post/get-by-id/${postId}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch post details");
                 }
@@ -60,7 +61,7 @@ const Post = () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:5124/api/Post/add-comment/${postId}`, {
+            const response = await fetch(`${API_END_POINT}/api/Post/add-comment/${postId}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(commentRequest),
@@ -88,7 +89,7 @@ const Post = () => {
     const handleEditCommentSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch(`http://localhost:5124/api/Post/edit-comment/${postId}/${editCommentData.commentId}`, {
+            const response = await fetch(`${API_END_POINT}/api/Post/edit-comment/${postId}/${editCommentData.commentId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId: userData?.userId, content: editCommentData.content }),
@@ -116,7 +117,7 @@ const Post = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5124/api/Post/delete-comment/${postId}/${commentId}`, {
+            const response = await fetch(`${API_END_POINT}/api/Post/delete-comment/${postId}/${commentId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
@@ -169,15 +170,15 @@ const Post = () => {
 
                     {post.comments && post.comments.length > 0 && (
                         <div className="mt-5">
-                            <h4 className="mb-3">Comments</h4>
-                            <ul className="list-group">
+                            <h4 className="mb-3" style={{ color: "#a21fd1", marginBottom: "3rem", fontFamily: 'QueensidesMedium' }}>Comments</h4>
+                            <ul className="list-group" style={{ textAlign: "left" }}>
                                 {post.comments.map((comment, index) => (
                                     <li className="list-group-item mb-1 mt-1 custom-tb" key={index}>
-                                        <strong>{comment.fullName}:</strong>
+                                        <strong style={{ color: "#a21fd1", fontFamily: 'QueensidesMedium' }}>{comment.fullName}</strong>
                                         <br />
                                         {comment.content}
 
-                                        <br />
+                                        <br /> <br />
                                         <small className="text-hint">
                                             {new Date(comment.postedAt).toLocaleString()}
                                         </small>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import "../assets/css/App.css";
 import Logo from "../assets/img/Logo.png";
+import { API_END_POINT } from '../constants';
 
 const LoginRegistration = () => {
 
@@ -19,10 +20,10 @@ const LoginRegistration = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5124/api/User/login", {
+            const response = await fetch(`${API_END_POINT}/api/User/login`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ FullName: "", Username: "", EmailAddress: EmailAddress, UserPassword: UserPassword }),
             });
@@ -48,10 +49,10 @@ const LoginRegistration = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch("http://localhost:5124/api/User/register", {
+            const response = await fetch(`${API_END_POINT}/api/User/register`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ FullName: FullName, Username: Username, EmailAddress: RegEmailAddress, UserPassword: RegUserPassword }),
             });
@@ -62,6 +63,11 @@ const LoginRegistration = () => {
                 document.getElementById('reg_info').style.color = "#074f1b";
                 document.getElementById('reg_info').style.padding = "10px";
                 document.getElementById('reg_info').style.backgroundColor = "#72ad82";
+
+                setFullName("");
+                setRegEmailAddress("");
+                setUsername("");
+                setRegUserPassword("");
 
             } else {
                 document.getElementById('reg_info').innerText = "Registration failed!";
@@ -219,7 +225,7 @@ const LoginRegistration = () => {
 
                     </div>
 
-                    <hr className='mt-5' />
+                    <hr />
 
                     <p className="text-center text-muted">
                         Copyright © 2024 PixShare - Dilshan & Ritika. All Rights Reserved.

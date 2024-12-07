@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import { faCalendarDays } from '@fortawesome/free-regular-svg-icons';
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { API_END_POINT } from '../constants';
 
 const ProfilePage = () => {
     const [posts, setPosts] = useState([]);
@@ -32,7 +36,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const response = await fetch(`http://localhost:5124/api/Post/get-all-by-user/${userData.userId}`);
+                const response = await fetch(`${API_END_POINT}/api/Post/get-all-by-user/${userData.userId}`);
                 if (!response.ok) {
                     throw new Error("Failed to fetch posts");
                 }
@@ -54,7 +58,7 @@ const ProfilePage = () => {
         if (!isConfirmed) return;
 
         try {
-            const response = await fetch(`http://localhost:5124/api/Post/delete/${postId}?userId=${userId}`, {
+            const response = await fetch(`${API_END_POINT}/api/Post/delete/${postId}?userId=${userId}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
@@ -79,7 +83,7 @@ const ProfilePage = () => {
         };
 
         try {
-            const response = await fetch(`http://localhost:5124/api/Post/edit/${selectedPost.postId}`, {
+            const response = await fetch(`${API_END_POINT}/api/Post/edit/${selectedPost.postId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedPost),
@@ -113,7 +117,7 @@ const ProfilePage = () => {
                     <h1 className='display-6' style={{ color: "#a21fd1", fontFamily: 'QueensidesMedium', marginTop: "6rem" }}>Your Feed</h1>
                 </div>
 
-                <div className="row align-items-center">
+                <div className="align-items-center">
                     <p style={{ marginTop: '2rem' }}>Want to create a new post?</p>
                     <button className="btn btn-primary" onClick={() => navigate('/create')}>Create New</button>
                 </div>
@@ -122,18 +126,18 @@ const ProfilePage = () => {
                     {posts.map((post) => (
                         <div className="col-md-3 mb-4" key={post.postId}>
                             <div className="card shadow-sm">
-                                <img src={post.s3Url} className="card-img-top" alt="Post" style={{ borderRadius: '10px', height: '200px', objectFit: 'cover' }} />
+                                <img src={post.s3Url} className="card-img-top" alt="Post" style={{ borderRadius: '10px', height: '200px', objectFit: 'cover', padding: "10px" }} />
 
                                 <div className="card-body">
                                     <h5 className="card-title">{post.postCaption}</h5>
-                                    <p className="card-text">{post.location}</p>
-                                    <p className="card-text">{new Date(post.postedDate).toLocaleDateString()}</p>
+                                    <p className="card-text" style={{ color: "#a21fd1", marginTop: "2rem", fontFamily: 'QueensidesMedium' }}>< FontAwesomeIcon icon={faLocationDot} /> &nbsp;{post.location}</p>
+                                    <p className="card-text" style={{ color: "#a21fd1", marginBottom: "2rem", fontFamily: 'QueensidesMedium' }}><FontAwesomeIcon icon={faCalendarDays} /> &nbsp;{new Date(post.postedDate).toLocaleDateString()}</p>
 
-                                    <div className="d-flex justify-content-between">
+                                    <div>
                                         <button className="btn btn-warning btn-sm" onClick={() => handleEditPost(post.postId)} data-bs-toggle="modal" data-bs-target="#editPostModal">
                                             Edit
                                         </button>
-                                        <button className="btn btn-danger btn-sm" onClick={() => handleDeletePost(post.postId)}>
+                                        <button className="btn btn-danger btn-sm" style={{ marginLeft: "5px" }} onClick={() => handleDeletePost(post.postId)}>
                                             Delete
                                         </button>
                                     </div>
@@ -141,6 +145,7 @@ const ProfilePage = () => {
                             </div>
                         </div>
                     ))}
+
                 </div>
             </div>
 

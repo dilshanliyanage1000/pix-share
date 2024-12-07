@@ -3,8 +3,10 @@ import { useNavigate, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import '../assets/css/Home.css';
 import { faUser, faCalendarDays } from '@fortawesome/free-regular-svg-icons';
-import { faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as fullHeart, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { faHeart as emptyHeart, faComment } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { API_END_POINT } from '../constants';
 
 const Home = () => {
 
@@ -27,32 +29,76 @@ const Home = () => {
         }
     }, [userData, navigate]);
 
-    useEffect(() => {
-        const fetchPosts = async () => {
-            try {
-                const response = await fetch("http://localhost:5124/api/Post/get-all");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch posts");
-                }
-                const data = await response.json();
-                
-                const sortedPosts = data.sort((a, b) => {
-                    const dateA = new Date(a.postedDate);
-                    const dateB = new Date(b.postedDate);
-                    return dateB - dateA;
-                });
+    const fetchPosts = async () => {
+        try {
+            const response = await fetch(`${API_END_POINT}/api/Post/get-all`);
 
-                setPosts(sortedPosts);
-
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+            if (!response.ok) {
+                throw new Error("Failed to fetch posts");
             }
-        };
+            const data = await response.json();
 
+            const sortedPosts = data.sort((a, b) => {
+                const dateA = new Date(a.postedDate);
+                const dateB = new Date(b.postedDate);
+                return dateB - dateA;
+            });
+
+            setPosts(sortedPosts);
+
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchPosts();
     }, []);
+
+    const handleLikeClick = async (postId) => {
+
+        try {
+            const response = await fetch(`${API_END_POINT}/api/Like`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId: userId, postId: postId })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to send post data");
+            }
+
+            fetchPosts();
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
+    const handleDislikeClick = async (postId) => {
+
+        try {
+            const response = await fetch(`${API_END_POINT}/api/Like`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ userId: userId, postId: postId })
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to send post data");
+            }
+
+            fetchPosts();
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+
 
     const handlePasswordChange = async (e) => {
 
@@ -64,9 +110,11 @@ const Home = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:5124/api/User/update-password/${userId}`, {
+            const response = await fetch(`${API_END_POINT}/api/User/update-password/${userId}`, {
                 method: "PATCH",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ NewPassword: newPassword }),
             });
 
@@ -101,24 +149,12 @@ const Home = () => {
 
                 <div className="c-pad col-md-3">
 
-                    <div style={{ marginTop: "6rem" }}>
-                        <p style={{ marginBottom: "1rem" }}>Want to share your thoughts? Express your feelings?</p>
-                        <Link className="btn btn-primary" to="/create" style={{ backgroundColor: "#dd6362", borderColor: "#dd6362" }}>Create Post</Link>
-                    </div>
-
-                    <div style={{ marginTop: "4rem" }}>
-                        <p style={{ marginBottom: "1rem" }}>Forgot your password?</p>
-                        <Link className="btn btn-dark"
-                            data-bs-toggle="modal"
-                            data-bs-target="#editPasswordModal">Change password</Link>
-                    </div>
-
 
                 </div>
 
                 <div className="c-pad col-md-6">
 
-                    <div className="text-center" style={{ marginTop: "6rem" }}>
+                    <div className="text-center" style={{ marginTop: "5rem" }}>
                         <h1 className='display-6' style={{ color: "#a21fd1", fontFamily: 'QueensidesMedium' }}>Post Feed</h1>
                     </div>
 
@@ -130,32 +166,102 @@ const Home = () => {
                                 style={{ width: "400px" }}
                             >
                                 <div className='card-header' style={{ color: "#4a2f69", fontWeight: "bold", fontFamily: 'QueensidesMedium' }}> < FontAwesomeIcon icon={faUser} /> &nbsp;&nbsp;{post.fullName}&nbsp;(@{post.username})</div>
+
                                 {post.s3Url && (
                                     <img src={post.s3Url} className="card-img-top" alt="Post Image" style={{ padding: "10px", borderRadius: "20px" }} />
                                 )}
+
                                 <div className="card-body">
-                                    <p className="card-text" style={{ color: "#ab448e", fontFamily: 'QueensidesMedium', fontWeight: "bold" }}>< FontAwesomeIcon icon={faLocationDot} /> &nbsp;{post.location}</p>
-                                    <h5 className="card-title">{post.postCaption}</h5>
-                                    <p className="card-text mt-4" style={{ color: "#ab448e", fontFamily: 'QueensidesMedium' }}> <FontAwesomeIcon icon={faCalendarDays} /> &nbsp; {post.postedDate ? new Date(post.postedDate).toLocaleDateString() : "Unknown Date"}</p>
+
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+
+                                        <div style={{ display: "flex", alignItems: "center" }}>
+
+                                            {post.likesList.some(like => like.userId === userId) ? (
+                                                <FontAwesomeIcon
+                                                    icon={fullHeart}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "24px",
+                                                        color: "#f54242",
+                                                        marginRight: "50%",
+                                                    }}
+                                                    onClick={() => handleDislikeClick(post.postId)}
+                                                    title="Like Post"
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon
+                                                    icon={emptyHeart}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "24px",
+                                                        color: "#8f8f8f",
+                                                        marginRight: "50%",
+                                                    }}
+                                                    onClick={() => handleLikeClick(post.postId)}
+                                                    title="Like Post"
+                                                />
+                                            )}
+
+                                            {/* {post.likesList?.includes(userId) ? (
+                                                <FontAwesomeIcon
+                                                    icon={fullHeart}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "24px",
+                                                        color: "#8f8f8f",
+                                                        marginRight: "50%",
+                                                    }}
+                                                    onClick={() => handleLikeClick(post.postId)}
+                                                    title="Unlike Post"
+                                                />
+                                            ) : (
+                                                <FontAwesomeIcon
+                                                    icon={emptyHeart}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "24px",
+                                                        color: "#8f8f8f",
+                                                        marginRight: "50%",
+                                                    }}
+                                                    onClick={() => handleLikeClick(post.postId)}
+                                                    title="Like Post"
+                                                />
+                                            )} */}
+
+                                            <Link to={`/post/${post.postId}`}>
+                                                <FontAwesomeIcon
+                                                    icon={faComment}
+                                                    style={{
+                                                        cursor: "pointer",
+                                                        fontSize: "24px",
+                                                        color: "#8f8f8f",
+                                                    }}
+                                                    title="Comment on Post"
+                                                />
+                                            </Link>
+
+                                        </div>
+
+                                        <span className="text-muted" style={{ fontSize: "14px" }}>
+                                            {post.likesCount} likes • {post.commentsCount} comments
+                                        </span>
+                                    </div>
+
+                                    <h6 className="card-title mt-4"><span style={{ color: "#a21fd1", fontFamily: 'QueensidesMedium', fontWeight: "bold" }}>@{post.username}</span> {post.postCaption}</h6>
+
+                                    <p className="card-text mt-4" style={{ color: "#ab448e", fontFamily: 'QueensidesMedium', fontWeight: "bold" }}>< FontAwesomeIcon icon={faLocationDot} /> &nbsp;{post.location} &nbsp;•&nbsp;&nbsp;<FontAwesomeIcon icon={faCalendarDays} /> &nbsp; {post.postedDate ? new Date(post.postedDate).toLocaleDateString() : "Unknown Date"}</p>
                                 </div>
-                                <div className="card-footer" style={{ textAlign: "end" }}>
-                                    <Link style={{ textDecoration: "none", color: "red", fontWeight: "bold" }} to={`/post/${post.postId}`} >
-                                        View Comments
-                                    </Link>
-                                </div>
+
                             </div>
                         ))}
                     </div>
-
 
                 </div>
 
                 <div className="c-pad col-md-3">
 
-                    <div style={{ marginTop: "6rem", textAlign: "right" }}>
-                        <p style={{ marginBottom: "1rem" }}>Check your posts? Update your thoughts?</p>
-                        <Link className="btn btn-dark" to="/profile" style={{ backgroundColor: "#dd6362", borderColor: "#dd6362" }}>Your Feed</Link>
-                    </div>
+
 
                 </div>
 
